@@ -36,6 +36,7 @@ from apis.urbandic import urbanDict
 from apis.lastfm import getCurrentSong
 from apis.rottentomatoes import rottentomatoes
 from apis.reddit import reddit
+from apis.mtgCardRequest import mtgCardRequest
 import ConfigParser
 import json
 import traceback
@@ -277,6 +278,23 @@ class LogBot(irc.IRCClient):
                         self.msg(channel, answer)
                     else:
                         answer = 'I can\'t find that movie'
+                        self.msg(channel, answer)
+                except Exception, e:
+                    self.logError(channel)
+                    
+            elif parts[1] == 'magic':
+                try:
+                    cardname = parts[2]
+                    cardset = parts[3]
+                    mtgcard_response = mtgCardRequest(cardname, cardset)
+                    if mtgcard_response:
+                        answer = 'Low: %s Medium: %s High: %s'.format(
+                            mtgcard_response['tcgplayer_low'],
+                            mtgcard_response['tcgplayer_medium'],
+                            mtgcard_response['tcgplayer_high'])
+                        self.msg(channel, answer)
+                    else:
+                        answer = 'I can\'t find that card'
                         self.msg(channel, answer)
                 except Exception, e:
                     self.logError(channel)
